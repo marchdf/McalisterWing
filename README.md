@@ -30,16 +30,11 @@ omega_farfield = 1e-6 \frac{\rho_\infty a^2_\infty}{\mu_\infty}= 1e-6
 
 ## Metric of comparison
 
-### Case 1: alpha = 0, Re = 1.5e6
+### Case 1: alpha = 12, Re = 1.5e6
 
 Simulation results will be compared to experimental results of the
-wing surface metrics (Cl, Cp, Cd) as shown in Fig. 18a of the
-McAlister paper.
-
-
-### Case 2: alpha = 12, Re = 1.5e6
-
-In addition to wing surface metrics (Fig. 19a, 21c and 27c), tip
+wing surface metrics (Cl, Cp, Cd) as shown in Fig. 19a, 21c and 27c of
+the McAlister paper. In addition to wing surface metrics, tip
 vortex metrics will also be compared to simulation results (Fig. 39 of
 McAlister paper).
 
