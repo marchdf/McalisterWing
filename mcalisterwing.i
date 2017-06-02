@@ -79,46 +79,40 @@ realms:
     boundary_conditions:
 
     - wall_boundary_condition: bc_wall
-      target_name: bottomwall
+      target_name: Support
       wall_user_data:
         velocity: [0,0,0]
         turbulent_ke: 0.0
         use_wall_function: no
 
     - wall_boundary_condition: bc_wall
-      target_name: topwall
+      target_name: TunnelWalls
+      wall_user_data:
+        velocity: [0,0,0]
+        turbulent_ke: 0.0
+        use_wall_function: no
+
+    - wall_boundary_condition: bc_wall
+      target_name: Wing
       wall_user_data:
         velocity: [0,0,0]
         turbulent_ke: 0.0
         use_wall_function: no
 
     - inflow_boundary_condition: bc_inflow
-      target_name: inlet
+      target_name: TunnelInlet
       inflow_user_data:
         velocity: [46,0.0,0.0]
         turbulent_ke: 0.001127
         specific_dissipation_rate: 7983.14
 
     - open_boundary_condition: bc_open
-      target_name: outlet
+      target_name: TunnelOutlet
       open_user_data:
         velocity: [0,0,0]
         pressure: 0.0
         turbulent_ke: 0.001127
         specific_dissipation_rate: 7983.14
-
-    - symmetry_boundary_condition: bc_symBottom
-      target_name: bottomsym
-      symmetry_user_data:
-
-    - symmetry_boundary_condition: bc_symTop
-      target_name: topsym
-      symmetry_user_data:
-
-    - periodic_boundary_condition: bc_front_back
-      target_name: [front, back]
-      periodic_user_data:
-        search_tolerance: 0.0001
 
     solution_options:
       name: myOptions
@@ -151,15 +145,6 @@ realms:
         - turbulence_model_constants:
             SDRWallFactor: 10.0
 
-    turbulence_averaging:
-      time_filter_interval: 10.0
-
-      specifications:
-
-        - name: one
-          target_name: [Upstream-HEX,TipVortex-HEX,WingBox-HEX,WingBox-WEDGE,TestSection-PYRAMID,WingBox-PYRAMID,TestSection-TETRA,WingBox-TETRA]
-          compute_reynolds_stress: yes
-
     data_probes:
 
       output_frequency: 500
@@ -169,100 +154,25 @@ realms:
       search_expansion_factor: 2.0
 
       specifications:
-        - name: probe_bottomwall
-          from_target_part: bottomwall
+        - name: probe_vortex
+          from_target_part: TipVortex-HEX
 
           line_of_site_specifications:
-            - name: results/probe_backbottomwall
+            - name: results/probe_0
               number_of_points: 100
               tip_coordinates: [0.0, 0.0, 0.0 ]
               tail_coordinates: [30.0, 0.0, 0.0]
 
-            - name: results/probe_frontbottomwall
+            - name: results/probe_1
               number_of_points: 400
               tip_coordinates: [-110.0, 0.0, 1.0 ]
               tail_coordinates: [0.0, 0.0, 1.0]
 
           output_variables:
-            - field_name: tau_wall
-              field_size: 1
+            - field_name: velocity
+              field_size: 3
             - field_name: pressure
               field_size: 1
-
-        - name: probe_profile0
-          from_target_part: Unspecified-3-HEX
-
-          line_of_site_specifications:
-            - name: results/probe_profile0
-              number_of_points: 200
-              tip_coordinates: [-4.0, 0.0, 1.0 ]
-              tail_coordinates: [-4.0, 0.0, 9.0]
-
-          output_variables:
-            - field_name: velocity
-              field_size: 3
-            - field_name: reynolds_stress
-              field_size: 6
-
-        - name: probe_profile1
-          from_target_part: Unspecified-4-HEX
-
-          line_of_site_specifications:
-            - name: results/probe_profile1
-              number_of_points: 200
-              tip_coordinates: [1.0, 0.0, 0.0 ]
-              tail_coordinates: [1.0, 0.0, 9.0]
-
-          output_variables:
-            - field_name: velocity
-              field_size: 3
-            - field_name: reynolds_stress
-              field_size: 6
-
-        - name: probe_profile2
-          from_target_part: Unspecified-4-HEX
-
-          line_of_site_specifications:
-            - name: results/probe_profile2
-              number_of_points: 200
-              tip_coordinates: [4.0, 0.0, 0.0 ]
-              tail_coordinates: [4.0, 0.0, 9.0]
-
-          output_variables:
-            - field_name: velocity
-              field_size: 3
-            - field_name: reynolds_stress
-              field_size: 6
-
-        - name: probe_profile3
-          from_target_part: Unspecified-4-HEX
-
-          line_of_site_specifications:
-            - name: results/probe_profile3
-              number_of_points: 200
-              tip_coordinates: [6.0, 0.0, 0.0 ]
-              tail_coordinates: [6.0, 0.0, 9.0]
-
-          output_variables:
-            - field_name: velocity
-              field_size: 3
-            - field_name: reynolds_stress
-              field_size: 6
-
-        - name: probe_profile4
-          from_target_part: Unspecified-5-HEX
-
-          line_of_site_specifications:
-            - name: results/probe_profile4
-              number_of_points: 200
-              tip_coordinates: [10.0, 0.0, 0.0 ]
-              tail_coordinates: [10.0, 0.0, 9.0]
-
-          output_variables:
-            - field_name: velocity
-              field_size: 3
-            - field_name: reynolds_stress
-              field_size: 6
 
     post_processing:
 
@@ -271,7 +181,7 @@ realms:
       output_file_name: results/McalisterWing.dat
       frequency: 1000
       parameters: [0,0]
-      target_name: bottomwall
+      target_name: Wing
 
     output:
       output_data_base_name: results/McalisterWing.e
