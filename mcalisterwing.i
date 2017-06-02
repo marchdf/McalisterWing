@@ -62,9 +62,9 @@ realms:
         target_name: [Unspecified-2-HEX,Unspecified-3-HEX,Unspecified-4-HEX,Unspecified-5-HEX]
         value:
           pressure: 0
-          velocity: [0.5646,0.0,0.0]
-          turbulent_ke: 0.00000017511
-          specific_dissipation_rate: 1.2405
+          velocity: [46,0.0,0.0]
+          turbulent_ke: 0.001127
+          specific_dissipation_rate: 7983.14
 
     material_properties:
       target_name: [Unspecified-2-HEX,Unspecified-3-HEX,Unspecified-4-HEX,Unspecified-5-HEX]
@@ -95,17 +95,17 @@ realms:
     - inflow_boundary_condition: bc_inflow
       target_name: inlet
       inflow_user_data:
-        velocity: [0.5646,0.0,0.0]
-        turbulent_ke: 0.00000017511
-        specific_dissipation_rate: 1.2405
+        velocity: [46,0.0,0.0]
+        turbulent_ke: 0.001127
+        specific_dissipation_rate: 7983.14
 
     - open_boundary_condition: bc_open
       target_name: outlet
       open_user_data:
         velocity: [0,0,0]
         pressure: 0.0
-        turbulent_ke: 0.00000017511
-        specific_dissipation_rate: 1.2405
+        turbulent_ke: 0.001127
+        specific_dissipation_rate: 7983.14
 
     - symmetry_boundary_condition: bc_symBottom
       target_name: bottomsym
