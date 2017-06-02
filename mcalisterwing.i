@@ -59,7 +59,7 @@ realms:
 
     initial_conditions:
       - constant: ic_1
-        target_name: [Unspecified-2-HEX,Unspecified-3-HEX,Unspecified-4-HEX,Unspecified-5-HEX]
+        target_name: [Upstream-HEX,TipVortex-HEX,WingBox-HEX,WingBox-WEDGE,TestSection-PYRAMID,WingBox-PYRAMID,TestSection-TETRA,WingBox-TETRA]
         value:
           pressure: 0
           velocity: [46,0.0,0.0]
@@ -67,7 +67,7 @@ realms:
           specific_dissipation_rate: 7983.14
 
     material_properties:
-      target_name: [Unspecified-2-HEX,Unspecified-3-HEX,Unspecified-4-HEX,Unspecified-5-HEX]
+      target_name: [Upstream-HEX,TipVortex-HEX,WingBox-HEX,WingBox-WEDGE,TestSection-PYRAMID,WingBox-PYRAMID,TestSection-TETRA,WingBox-TETRA]
       specifications:
         - name: density
           type: constant
@@ -157,7 +157,7 @@ realms:
       specifications:
 
         - name: one
-          target_name: [Unspecified-2-HEX,Unspecified-3-HEX,Unspecified-4-HEX,Unspecified-5-HEX]
+          target_name: [Upstream-HEX,TipVortex-HEX,WingBox-HEX,WingBox-WEDGE,TestSection-PYRAMID,WingBox-PYRAMID,TestSection-TETRA,WingBox-TETRA]
           compute_reynolds_stress: yes
 
     data_probes:
