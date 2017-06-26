@@ -25,7 +25,7 @@ fdir = os.path.abspath(
 pattern = '*.e.*'
 fnames = sorted(glob.glob(os.path.join(fdir, pattern)))
 
-odir = os.path.abspath('/global/cscratch1/sd/marchdf/HybridWALE')
+odir = os.path.abspath('/global/cscratch1/sd/marchdf/HybridWALE/slices')
 oname = os.path.join(odir, 'output.csv')
 
 # ----------------------------------------------------------------
