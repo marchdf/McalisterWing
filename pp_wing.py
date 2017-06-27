@@ -28,7 +28,8 @@ fnames = sorted(glob.glob(os.path.join(fdir, pattern)))
 
 odir = os.path.abspath(
     '/global/cscratch1/sd/marchdf/McalisterWing/DES/wing_slices68M')
-shutil.rmtree(odir)
+shutil.rmtree(odir, ignore_errors=True)
+os.makedirs(odir)
 oname = os.path.join(odir, 'output.csv')
 
 # ----------------------------------------------------------------
@@ -68,7 +69,7 @@ slice1.SliceType.Normal = [0.0, 1.0, 0.0]
 # save data
 # ----------------------------------------------------------------
 SaveData(oname,
-         proxy=clip4,
+         proxy=slice1,
          Precision=5,
          UseScientificNotation=0,
          WriteAllTimeSteps=1,

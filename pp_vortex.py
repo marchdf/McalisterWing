@@ -28,7 +28,8 @@ fnames = sorted(glob.glob(os.path.join(fdir, pattern)))
 
 odir = os.path.abspath(
     '/global/cscratch1/sd/marchdf/McalisterWing/DES/vortex_slices68M')
-shutil.rmtree(odir)
+shutil.rmtree(odir, ignore_errors=True)
+os.makedirs(odir)
 oname = os.path.join(odir, 'output.csv')
 
 # ----------------------------------------------------------------
