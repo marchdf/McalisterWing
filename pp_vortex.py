@@ -1,6 +1,6 @@
 #
 # Run this script on NERSC Edison with something like:
-#    start_pvbatch.sh 4 4 00:10:00 default debug `pwd`/pp_planes.py
+#    start_pvbatch.sh 4 4 00:10:00 default debug `pwd`/pp_vortex.py
 #
 
 
@@ -14,6 +14,7 @@ paraview.simple._DisableFirstRenderCameraReset()
 
 import os
 import glob
+import shutil
 
 # ----------------------------------------------------------------
 # setup
@@ -21,11 +22,13 @@ import glob
 
 # Get file names
 fdir = os.path.abspath(
-    '/global/cscratch1/sd/mbarone/Mcalister/HybridWALE/output/')
+    '/global/cscratch1/sd/marchdf/McalisterWing/DES/output68M')
 pattern = '*.e.*'
 fnames = sorted(glob.glob(os.path.join(fdir, pattern)))
 
-odir = os.path.abspath('/global/cscratch1/sd/marchdf/HybridWALE/slices')
+odir = os.path.abspath(
+    '/global/cscratch1/sd/marchdf/McalisterWing/DES/vortex_slices68M')
+shutil.rmtree(odir)
 oname = os.path.join(odir, 'output.csv')
 
 # ----------------------------------------------------------------
@@ -54,7 +57,7 @@ slice1.SliceType = 'Plane'
 slice1.SliceOffsetValues = [0.0, 0.1, 0.2, 0.5, 1.0, 2.0, 4.0, 6.0]
 
 # init the 'Plane' selected for 'SliceType'
-slice1.SliceType.Origin = [0.985187, 0.0, 0.0]
+slice1.SliceType.Origin = [1.0, 0.0, 0.0]
 
 # create a new 'Clip'
 clip1 = Clip(Input=slice1)
