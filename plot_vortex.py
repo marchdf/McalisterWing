@@ -36,17 +36,6 @@ markertype = ['s', 'd', 'o', 'p', 'h']
 # Function definitions
 #
 # ========================================================================
-def get_merged_csv(fnames, **kwargs):
-    lst = []
-    for fname in fnames:
-        try:
-            df = pd.read_csv(fname, **kwargs)
-            lst.append(df)
-        except pd.errors.EmptyDataError:
-            pass
-    return pd.concat(lst, ignore_index=True)
-
-
 def parse_ic(fname):
     """Parse the Nalu yaml input file for the initial conditions"""
     with open(fname, 'r') as stream:
@@ -81,81 +70,84 @@ if __name__ == '__main__':
 
     # ========================================================================
     # Setup
-    fdir = os.path.abspath('HybridWALE')
-    sdir = os.path.join(fdir, 'slices')
-    pattern = '*99.csv'
-    yname = os.path.join(fdir, 'mcalisterWing.i')
+    ninterp = 100
+    mm2ft = 0.003281
+
+    fdir = os.path.abspath('DES')
+    yname = os.path.join(fdir, 'mcalisterWing68M.i')
+    fname = 'avg_slice.csv'
+    sdirs = ['vortex_slices68M',
+             'vortex_slices68M_shifted',
+             'vortex_slices68M_nso']
 
     edir = os.path.abspath('exp_data')
     fux_exp = os.path.join(edir, 'ux_x4.txt')
     fuz_exp = os.path.join(edir, 'uz_x4.txt')
-
-    ninterp = 100
-    mm2ft = 0.003281
-
-    # ========================================================================
-    # Read in data
-    fnames = sorted(glob.glob(os.path.join(sdir, pattern)))
-    df = get_merged_csv(fnames)
-    renames = {'Points:0': 'x',
-               'Points:1': 'y',
-               'Points:2': 'z',
-               'pressure': 'p',
-               'velocity_:0': 'ux',
-               'velocity_:1': 'uy',
-               'velocity_:2': 'uz'}
-    df.columns = [renames[col] for col in df.columns]
 
     # simulation setup parameters
     u0, rho0, mu = parse_ic(yname)
     chord = 1
 
     # ========================================================================
-    # Lineout through vortex core in each slice
-    xslices = np.unique(df['x'])
+    # Loop on data directories
+    for i, sdir in enumerate([os.path.join(fdir, sdir) for sdir in sdirs]):
 
-    for k, xslice in enumerate(xslices):
-        subdf = df[df['x'] == xslice]
-        idx = subdf['p'].idxmin()
-        ymin, ymax = np.min(subdf['y']), np.max(subdf['y'])
-        zmin, zmax = np.min(subdf['z']), np.max(subdf['z'])
+        # ========================================================================
+        # Read in data
+        df = pd.read_csv(os.path.join(sdir, fname), delimiter=',')
+        renames = {'Points:0': 'x',
+                   'Points:1': 'y',
+                   'Points:2': 'z',
+                   'pressure': 'p',
+                   'velocity_:0': 'ux',
+                   'velocity_:1': 'uy',
+                   'velocity_:2': 'uz',
+                   'time': 'avg_time'}
+        df.columns = [renames[col] for col in df.columns]
 
-        # vortex center location
-        yc = np.array([subdf['y'].loc[idx]])
-        zc = np.array([subdf['z'].loc[idx]])
+        # ========================================================================
+        # Lineout through vortex core in each slice
+        xslices = np.unique(df['x'])
+        xslices = [5]
 
-        # interpolate across the vortex core
-        yline = np.linspace(ymin, ymax, ninterp)
-        zline = np.linspace(zmin, zmax, ninterp)
-        ux_zc = spi.griddata((subdf['y'], subdf['z']), subdf['ux'],
-                             (yline[None, :], zc[:, None]), method='cubic')
-        uz_zc = spi.griddata((subdf['y'], subdf['z']), subdf['uz'],
-                             (yline[None, :], zc[:, None]), method='cubic')
+        for k, xslice in enumerate(xslices):
+            subdf = df[df['x'] == xslice]
+            idx = subdf['p'].idxmin()
+            ymin, ymax = np.min(subdf['y']), np.max(subdf['y'])
+            zmin, zmax = np.min(subdf['z']), np.max(subdf['z'])
 
-        plt.figure(0)
-        plt.plot(yline / chord, ux_zc[0, :] / u0, ls='-', lw=2, color=cmap[k])
+            # vortex center location
+            yc = np.array([subdf['y'].loc[idx]])
+            zc = np.array([subdf['z'].loc[idx]])
 
-        plt.figure(1)
-        plt.plot(yline / chord, uz_zc[0, :] / u0, ls='-', lw=2, color=cmap[k])
+            # interpolate across the vortex core
+            yline = np.linspace(ymin, ymax, ninterp)
+            zline = np.linspace(zmin, zmax, ninterp)
+            ux_zc = spi.griddata((subdf['y'], subdf['z']), subdf['ux'],
+                                 (yline[None, :], zc[:, None]), method='cubic')
+            uz_zc = spi.griddata((subdf['y'], subdf['z']), subdf['uz'],
+                                 (yline[None, :], zc[:, None]), method='cubic')
 
-    # # ========================================================================
-    # # Operate on each slice
-    # xslices = np.unique(df['x'])
-    # for k, xslice in enumerate(xslices):
-    #     subdf = df[df['x'] == xslice]
-    #     ymin, ymax = np.min(subdf['y']), np.max(subdf['y'])
-    #     zmin, zmax = np.min(subdf['z']), np.max(subdf['z'])
-    #     yi = np.linspace(ymin, ymax, ninterp)
-    #     zi = np.linspace(zmin, zmax, ninterp)
+            plt.figure(0)
+            plt.plot(yline / chord, ux_zc[0, :] /
+                     u0, ls='-', lw=2, color=cmap[i])
 
-    #     pi = spi.griddata((subdf['y'], subdf['z']), subdf['p'],
-    #                       (yi[None, :], zi[:, None]), method='cubic')
+            plt.figure(1)
+            plt.plot(yline / chord, uz_zc[0, :] /
+                     u0, ls='-', lw=2, color=cmap[i])
 
-    #     plt.figure(k + 100)
-    #     CS = plt.contourf(yi, zi, pi, 15, cmap=plt.cm.jet)
-    #     plt.colorbar()
-    #     plt.xlim(ymin, ymax)
-    #     plt.ylim(zmin, zmax)
+            # # Plot contours
+            # yi = np.linspace(ymin, ymax, ninterp)
+            # zi = np.linspace(zmin, zmax, ninterp)
+
+            # pi = spi.griddata((subdf['y'], subdf['z']), subdf['p'],
+            #                   (yi[None, :], zi[:, None]), method='cubic')
+
+            # plt.figure(k + 100)
+            # CS = plt.contourf(yi, zi, pi, 15, cmap=plt.cm.jet)
+            # plt.colorbar()
+            # plt.xlim(ymin, ymax)
+            # plt.ylim(zmin, zmax)
 
     # ========================================================================
     # Experimental data
@@ -164,8 +156,11 @@ if __name__ == '__main__':
     exp_uz_df = pd.read_csv(fuz_exp, delimiter=',',
                             header=0, names=['y', 'uz'])
 
-    exp_ux_df['y'] = exp_ux_df['y'] * mm2ft / chord
-    exp_uz_df['y'] = exp_uz_df['y'] * mm2ft / chord
+    # Shift in ft to align coordinates with mesh.
+    yshift = 0.0749174
+
+    exp_ux_df['y'] = (exp_ux_df['y'] * mm2ft - yshift) / chord
+    exp_uz_df['y'] = (exp_uz_df['y'] * mm2ft - yshift) / chord
 
     plt.figure(0)
     plt.plot(exp_ux_df['y'], exp_ux_df['ux'], ls='-', lw=1, color=cmap[-1],

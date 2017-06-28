@@ -101,76 +101,80 @@ if __name__ == '__main__':
 
     # ========================================================================
     # Setup
-    fdir = os.path.abspath('DES')
-    sdir = os.path.join(fdir, 'wing_slices68M')
-    pattern = 'output*.1.csv'
-    yname = os.path.join(fdir, 'mcalisterWing68M.i')
-
     ninterp = 100
     mm2ft = 0.003281
 
-    # ========================================================================
-    # Read in data
+    fdir = os.path.abspath('DES')
+    yname = os.path.join(fdir, 'mcalisterWing68M.i')
+    fname = 'avg_slice.csv'
+    sdirs = ['wing_slices68M',
+             'wing_slices68M_shifted',
+             'wing_slices68M_nso']
 
     # simulation setup parameters
     u0, rho0, mu = parse_ic(yname)
     chord = 1
 
-    # wing data
-    fnames = sorted(glob.glob(os.path.join(sdir, pattern)))
-    df = get_merged_csv(fnames)
-    renames = {'Points:0': 'x',
-               'Points:1': 'y',
-               'Points:2': 'z',
-               'pressure': 'p',
-               'pressure_force_:0': 'fpx',
-               'pressure_force_:1': 'fpy',
-               'pressure_force_:2': 'fpz',
-               'tau_wall': 'tau_wall',
-               'velocity_:0': 'ux',
-               'velocity_:1': 'uy',
-               'velocity_:2': 'uz'}
-    df.columns = [renames[col] for col in df.columns]
-    df.loc[df['y'] < 1e-16, 'y'] = 0
-
-    # Calculate the negative of the surface pressure coefficient
-    df['cp'] = - df['p'] / (0.5 * rho0 * u0**2)
-
     # ========================================================================
-    # Plot cp in each slice
-    yslices = np.unique(df['y'])
+    # Loop on data directories
+    for i, sdir in enumerate([os.path.join(fdir, sdir) for sdir in sdirs]):
 
-    for k, yslice in enumerate(yslices):
-        subdf = df[df['y'] == yslice]
+        # ========================================================================
+        # Read in data
+        df = pd.read_csv(os.path.join(sdir, fname), delimiter=',')
+        renames = {'Points:0': 'x',
+                   'Points:1': 'y',
+                   'Points:2': 'z',
+                   'pressure': 'p',
+                   'pressure_force_:0': 'fpx',
+                   'pressure_force_:1': 'fpy',
+                   'pressure_force_:2': 'fpz',
+                   'tau_wall': 'tau_wall',
+                   'velocity_:0': 'ux',
+                   'velocity_:1': 'uy',
+                   'velocity_:2': 'uz',
+                   'time': 'avg_time'}
+        df.columns = [renames[col] for col in df.columns]
 
-        # Sort for a pretty plot
-        x, z, cp = sort_by_angle(np.array(subdf['x']),
-                                 np.array(subdf['z']),
-                                 np.array(subdf['cp']))
+        # Calculate the negative of the surface pressure coefficient
+        df['cp'] = - df['p'] / (0.5 * rho0 * u0**2)
 
-        # plot
-        plt.figure(0)
-        ax = plt.gca()
-        polygons = []
-        polygons.append(Polygon(np.vstack((x, cp)).transpose()))
-        p = PatchCollection(polygons,
-                            edgecolors=cmap[k % len(cmap)],
-                            linewidths=2,
-                            facecolors='none')
-        ax.add_collection(p)
+        # ========================================================================
+        # Plot cp in each slice
+        yslices = np.unique(df['y'])
+
+        for k, yslice in enumerate(yslices):
+            subdf = df[df['y'] == yslice]
+
+            # Sort for a pretty plot
+            x, z, cp = sort_by_angle(np.array(subdf['x']),
+                                     np.array(subdf['z']),
+                                     np.array(subdf['cp']))
+
+            # plot
+            plt.figure(k)
+            ax = plt.gca()
+            polygons = []
+            polygons.append(Polygon(np.vstack((x, cp)).transpose()))
+            p = PatchCollection(polygons,
+                                edgecolors=cmap[i % len(cmap)],
+                                linewidths=2,
+                                facecolors='none')
+            ax.add_collection(p)
 
     # ========================================================================
     # Save plots
-    plt.figure(0)
-    ax = plt.gca()
-    plt.xlabel(r"$x/c$", fontsize=22, fontweight='bold')
-    plt.ylabel(r"$-c_p$", fontsize=22, fontweight='bold')
-    plt.setp(ax.get_xmajorticklabels(), fontsize=16, fontweight='bold')
-    plt.setp(ax.get_ymajorticklabels(), fontsize=16, fontweight='bold')
-    plt.xlim([0, chord])
-    plt.ylim([-1.5, 2.5])
-    plt.tight_layout()
-    plt.savefig('cp.png', format='png')
+    for k, yslice in enumerate(yslices):
+        plt.figure(k)
+        ax = plt.gca()
+        plt.xlabel(r"$x/c$", fontsize=22, fontweight='bold')
+        plt.ylabel(r"$-c_p$", fontsize=22, fontweight='bold')
+        plt.setp(ax.get_xmajorticklabels(), fontsize=16, fontweight='bold')
+        plt.setp(ax.get_ymajorticklabels(), fontsize=16, fontweight='bold')
+        plt.xlim([0, chord])
+        plt.ylim([-1.5, 4.5])
+        plt.tight_layout()
+        plt.savefig('cp_{0:f}.png'.format(yslice), format='png')
 
     if args.show:
         plt.show()
