@@ -30,7 +30,7 @@ realms:
 
   - name: realm_1
     mesh: ../mesh/grid07_conformal03_lowAR_ndtw.exo 
-    use_edges: no 
+    use_edges: no
     check_for_missing_bcs: yes
     automatic_decomposition_type: rcb
 
@@ -153,7 +153,7 @@ Time_Integrators:
       time_step: 1.0e-9
       time_stepping_type: adaptive
       time_step_count: 0
-      second_order_accuracy: yes
+      second_order_accuracy: yes 
 
       realms:
         - realm_1
