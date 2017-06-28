@@ -81,6 +81,7 @@ def sort_by_angle(x, y, var):
 
     # Sort based on this angle
     idx = angle.argsort()
+    idx = np.append(idx, idx[0])
 
     return x[idx], y[idx], var[idx]
 
@@ -105,11 +106,18 @@ if __name__ == '__main__':
     mm2ft = 0.003281
 
     fdir = os.path.abspath('DES')
-    yname = os.path.join(fdir, 'mcalisterWing68M.i')
+    yname = os.path.join(fdir, 'mcalisterWing64M.i')
     fname = 'avg_slice.csv'
-    sdirs = ['wing_slices68M',
-             'wing_slices68M_shifted',
-             'wing_slices68M_nso']
+    sdirs = ['wing_slices64M',
+             'wing_slices64M_shifted',
+             'wing_slices300M_shifted',
+             'wing_slices64M_nso',
+             'wing_slices300M_nso']
+    labels = ['DES 64M',
+              'DES shifted 64M',
+              'DES shifted 300M',
+              'LES-NSO 64M',
+              'LES-NSO 300M']
 
     # simulation setup parameters
     u0, rho0, mu = parse_ic(yname)
@@ -154,13 +162,9 @@ if __name__ == '__main__':
             # plot
             plt.figure(k)
             ax = plt.gca()
-            polygons = []
-            polygons.append(Polygon(np.vstack((x, cp)).transpose()))
-            p = PatchCollection(polygons,
-                                edgecolors=cmap[i % len(cmap)],
-                                linewidths=2,
-                                facecolors='none')
-            ax.add_collection(p)
+            p = plt.plot(x / chord, cp, ls='-', lw=2,
+                         color=cmap[i], label=labels[i])
+            p[0].set_dashes(dashseq[i])
 
     # ========================================================================
     # Save plots
@@ -174,6 +178,8 @@ if __name__ == '__main__':
         plt.xlim([0, chord])
         plt.ylim([-1.5, 4.5])
         plt.tight_layout()
+        if (k == 1):
+            legend = ax.legend(loc='best')
         plt.savefig('cp_{0:f}.png'.format(yslice), format='png')
 
     if args.show:

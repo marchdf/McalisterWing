@@ -157,13 +157,13 @@ realms:
     
     - type: surface
       physics: surface_force_and_moment_wall_function
-      output_file_name: wingForces68M.dat
+      output_file_name: wingForces64M.dat
       frequency: 1
       parameters: [0,0,0]
       target_name: Wing
 
     output:
-      output_data_base_name: output68M/mcalisterWing.e
+      output_data_base_name: output64M/mcalisterWing.e
       output_frequency: 400
       output_node_set: no
       output_variables:
@@ -173,7 +173,7 @@ realms:
        - specific_dissipation_rate
 
     restart:
-      restart_data_base_name: restart68M/mcalisterWing.rst
+      restart_data_base_name: restart64M/mcalisterWing.rst
       output_frequency: 250
       #restart_time: 52500.0
 
