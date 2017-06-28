@@ -1,7 +1,7 @@
 #!/bin/bash -l
 
-#SBATCH --nodes=64
-#SBATCH --ntasks=2048
+#SBATCH --nodes=256
+#SBATCH --ntasks=8192
 #SBATCH --time=36:00:00
 #SBATCH --job-name=mcalisterwing300M
 #SBATCH --partition=regular
@@ -10,8 +10,8 @@
 #SBATCH --constraint=haswell
 
 export executable=./naluX
-export nodes=64
+export nodes=256
 export cores=32      # Number MPI processes to run on each node (a.k.a. PPN)
-export totalCores=2048
+export totalCores=8192
 
 srun -N $nodes -n $totalCores -c 1 $executable -i mcalisterWing300M.i -o mcalisterWing300M.o
