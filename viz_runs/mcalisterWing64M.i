@@ -69,20 +69,20 @@ realms:
  
         - name: density
           type: constant
-          value: 0.00238
+          value: 0.003832
 
         - name: viscosity
           type: constant
-          value: 3.8e-7
+          value: 3.855e-7
 
     initial_conditions:
       - constant: ic_1
         target_name: [Upstream-HEX,TipVortex-HEX,WingBox-9-HEX,WingBox-9-WEDGE,TestSection-PYRAMID,WingBox-9-PYRAMID,TestSection-TETRA,WingBox-9-TETRA]
         value:
           pressure: 0
-          velocity: [239.4958,0.0,0.0]
-          turbulent_ke: 0.2
-          specific_dissipation_rate: 1.253e4
+          velocity: [150.9,0.0,0.0]
+          turbulent_ke: 0.01213
+          specific_dissipation_rate: 13395
 
   
     boundary_conditions:
@@ -98,17 +98,17 @@ realms:
     - inflow_boundary_condition: bc_inflow
       target_name: TunnelInlet
       inflow_user_data:
-        velocity: [239.4958,0.0,0.0]
-        turbulent_ke: 0.2
-        specific_dissipation_rate: 1.253e4
+        velocity: [150.9,0.0,0.0]
+        turbulent_ke: 0.01213
+        specific_dissipation_rate: 13395
 
     - open_boundary_condition: bc_outflow
       target_name: TunnelOutlet
       open_user_data:
         velocity: [0.0,0,0]
         pressure: 0.0
-        turbulent_ke: 0.2
-        specific_dissipation_rate: 1.253e4
+        turbulent_ke: 0.01213
+        specific_dissipation_rate: 13395
 
     - wall_boundary_condition: bc_wing
       target_name: Wing
@@ -175,7 +175,6 @@ realms:
     restart:
       restart_data_base_name: restart64M/mcalisterWing.rst
       output_frequency: 250
-      #restart_time: 52500.0
 
 Time_Integrators:
   - StandardTimeIntegrator:
