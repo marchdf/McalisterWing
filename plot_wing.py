@@ -10,6 +10,8 @@ import sys
 import os
 import glob
 import numpy as np
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon
 from matplotlib.collections import PatchCollection
@@ -108,16 +110,20 @@ if __name__ == '__main__':
     fdir = os.path.abspath('DES')
     yname = os.path.join(fdir, 'mcalisterWing64M.i')
     fname = 'avg_slice.csv'
+    # sdirs = ['wing_slices64M',
+    #          'wing_slices64M_shifted',
+    #          'wing_slices300M_shifted',
+    #          'wing_slices64M_nso',
+    #          'wing_slices300M_nso']
+    # labels = ['DES 64M',
+    #           'DES shifted 64M',
+    #           'DES shifted 300M',
+    #           'LES-NSO 64M',
+    #           'LES-NSO 300M']
     sdirs = ['wing_slices64M',
-             'wing_slices64M_shifted',
-             'wing_slices300M_shifted',
-             'wing_slices64M_nso',
-             'wing_slices300M_nso']
+             'wing_slicesRC64M']
     labels = ['DES 64M',
-              'DES shifted 64M',
-              'DES shifted 300M',
-              'LES-NSO 64M',
-              'LES-NSO 300M']
+              'DES RC 64M']
 
     # simulation setup parameters
     u0, rho0, mu = parse_ic(yname)

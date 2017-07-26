@@ -22,12 +22,12 @@ import shutil
 
 # Get file names
 fdir = os.path.abspath(
-    '/global/cscratch1/sd/marchdf/McalisterWing/DES/output68M')
+    '/scratch/mhenryde/McalisterWing/DES/outputRC64M')
 pattern = '*.e.*'
 fnames = sorted(glob.glob(os.path.join(fdir, pattern)))
 
 odir = os.path.abspath(
-    '/global/cscratch1/sd/marchdf/McalisterWing/DES/wing_slices68M')
+    '/scratch/mhenryde/McalisterWing/DES/wing_slicesRC64M')
 shutil.rmtree(odir, ignore_errors=True)
 os.makedirs(odir)
 oname = os.path.join(odir, 'output.csv')

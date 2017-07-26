@@ -2,6 +2,9 @@
 #
 # This makes a dataframe containing a temporal average of navg last wing slices
 #
+# Run this in the data directory, e.g. from /scratch/mhenryde/McalisterWing/DES/wing_slices64M:
+#    > /path/to/script/avg_wing_slices.py
+#
 
 # ========================================================================
 #
@@ -27,7 +30,7 @@ def get_merged_csv(fnames, **kwargs):
         try:
             df = pd.read_csv(fname, **kwargs)
             lst.append(df)
-        except pd.errors.EmptyDataError:
+        except pd.io.common.EmptyDataError:
             pass
     return pd.concat(lst, ignore_index=True)
 
@@ -41,9 +44,8 @@ if __name__ == '__main__':
 
     # ========================================================================
     # Setup
-    fdir = os.path.abspath('DES')
-    sdir = os.path.join(fdir, 'wing_slices68M')
-    oname = os.path.join(sdir, 'avg_slice.csv')
+    fdir = os.getcwd()
+    oname = os.path.join(fdir, 'avg_slice.csv')
     prefix = 'output'
     suffix = '.csv'
 
@@ -52,7 +54,7 @@ if __name__ == '__main__':
 
     # Get time steps, keep only last navg steps
     pattern = prefix + '*' + suffix
-    fnames = sorted(glob.glob(os.path.join(sdir, pattern)))
+    fnames = sorted(glob.glob(os.path.join(fdir, pattern)))
     times = []
     for fname in fnames:
         times.append(int(re.findall(r'\d+', fname)[-1]))
@@ -62,7 +64,7 @@ if __name__ == '__main__':
     lst = []
     for time in times:
         pattern = prefix + '*.' + str(time) + suffix
-        fnames = sorted(glob.glob(os.path.join(sdir, pattern)))
+        fnames = sorted(glob.glob(os.path.join(fdir, pattern)))
         df = get_merged_csv(fnames)
         lst.append(df)
         df['time'] = time

@@ -10,6 +10,8 @@ import sys
 import os
 import glob
 import numpy as np
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 import pandas as pd
 import scipy.interpolate as spi
@@ -76,16 +78,20 @@ if __name__ == '__main__':
     fdir = os.path.abspath('DES')
     yname = os.path.join(fdir, 'mcalisterWing64M.i')
     fname = 'avg_slice.csv'
-    sdirs = ['vortex_slices64M',
-             'vortex_slices64M_shifted',
-             'vortex_slices64M_nso']
-    labels = ['DES 64M',
-              'DES shifted 64M',
-              'LES-NSO 64M']
+    # sdirs = ['vortex_slices64M',
+    #          'vortex_slices64M_shifted',
+    #          'vortex_slices64M_nso']
+    # labels = ['DES 64M',
+    #           'DES shifted 64M',
+    #           'LES-NSO 64M']
     # sdirs = ['vortex_slices64M_shifted',
     #          'vortex_slices300M_shifted']
     # labels = ['DES shifted 64M',
     #           'DES shifted 300M']
+    sdirs = ['vortex_slices64M',
+             'vortex_slicesRC64M']
+    labels = ['DES 64M',
+              'DES RC 64M']
 
     edir = os.path.abspath('exp_data')
     fux_exp = os.path.join(edir, 'ux_x4.txt')
@@ -146,7 +152,7 @@ if __name__ == '__main__':
             p[0].set_dashes(dashseq[i])
 
             # Plot contours
-            if i == 2:
+            if i == 0:
                 yi = np.linspace(ymin, ymax, ninterp)
                 zi = np.linspace(zmin, zmax, ninterp)
 
