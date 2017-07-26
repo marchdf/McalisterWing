@@ -124,7 +124,7 @@ if __name__ == '__main__':
         xslices = [5]
 
         for k, xslice in enumerate(xslices):
-            subdf = df[df['x'] == xslice]
+            subdf = df[df['x'] == xslice].copy()
             idx = subdf['p'].idxmin()
             ymin, ymax = np.min(subdf['y']), np.max(subdf['y'])
             zmin, zmax = np.min(subdf['z']), np.max(subdf['z'])
@@ -156,11 +156,14 @@ if __name__ == '__main__':
                 yi = np.linspace(ymin, ymax, ninterp)
                 zi = np.linspace(zmin, zmax, ninterp)
 
-                pi = spi.griddata((subdf['y'], subdf['z']), subdf['p'],
+                vcols = ['ux', 'uy', 'uz']
+                subdf['magvel'] = np.sqrt(np.square(subdf[vcols]).sum(axis=1))
+
+                vi = spi.griddata((subdf['y'], subdf['z']), subdf['magvel'],
                                   (yi[None, :], zi[:, None]), method='cubic')
 
-                plt.figure(k + 100)
-                CS = plt.contourf(yi, zi, pi, 15, cmap=plt.cm.jet)
+                plt.figure(2)
+                CS = plt.contourf(yi, zi, vi, 15)
                 plt.colorbar()
                 plt.xlim(ymin, ymax)
                 plt.ylim(zmin, zmax)
@@ -208,6 +211,17 @@ if __name__ == '__main__':
     plt.tight_layout()
     ax.set_xlim([-1, 1])
     plt.savefig('uz.png', format='png')
+
+    plt.figure(2)
+    ax = plt.gca()
+    plt.xlabel(r"$y/c$", fontsize=22, fontweight='bold')
+    plt.ylabel(r"$z/c$", fontsize=22, fontweight='bold')
+    plt.setp(ax.get_xmajorticklabels(), fontsize=16, fontweight='bold')
+    plt.setp(ax.get_ymajorticklabels(), fontsize=16, fontweight='bold')
+    plt.tight_layout()
+    ax.set_xlim([-1, 1])
+    ax.set_ylim([-1, 1])
+    plt.savefig('magvel.png', format='png')
 
     if args.show:
         plt.show()
