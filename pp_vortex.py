@@ -22,12 +22,17 @@ import shutil
 
 # Get file names
 fdir = os.path.abspath(
-    '/scratch/mhenryde/McalisterWing/DES/output64M')
-pattern = '*.e.*'
+    #'/global/cscratch1/sd/marchdf/McalisterWing/DES/output68M')
+    #'/global/cscratch1/sd/spdomin/mcalister_nso_les_des/mc_des_68M/output')
+    #'/global/cscratch1/sd/spdomin/mcalister_nso_les_des/mc_nso_68M/output')
+    '/global/cscratch1/sd/spdomin/mcalister_nso_les_des/mc_des_300M/output')
+    #'/global/cscratch1/sd/spdomin/mcalister_nso_les_des/mc_nso_300M/output')
+pattern = 'mcalisterWingLIM_DES_shifted.e.*'
+#pattern = 'mcalisterWing.e.*'
 fnames = sorted(glob.glob(os.path.join(fdir, pattern)))
 
 odir = os.path.abspath(
-    '/scratch/mhenryde/McalisterWing/DES/vortex_slices64M')
+    '/global/cscratch1/sd/marchdf/McalisterWing/DES/vortex_slices300M')
 shutil.rmtree(odir, ignore_errors=True)
 os.makedirs(odir)
 oname = os.path.join(odir, 'output.csv')
